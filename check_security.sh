@@ -46,7 +46,7 @@ U02(){
     REPORT_LOG "W" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 
-  RUNC grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '
+  RUNC "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     expr $(grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0
     if [ ${pwa_vlaue} -eq -1 ]; then
@@ -58,7 +58,7 @@ U02(){
     REPORT_LOG "W" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 
-  RUNC grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '
+  RUNC "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     expr $(grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0
     if [ ${pwa_vlaue} -eq -1 ]; then
@@ -70,7 +70,7 @@ U02(){
     REPORT_LOG "W" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 
-  RUNC grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '
+  RUNC "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     expr $(grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0
     if [ ${pwa_vlaue} -eq -1 ]; then
@@ -82,7 +82,7 @@ U02(){
     REPORT_LOG "W" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 
-  RUNC grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '
+  RUNC "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     expr $(grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0
     if [ ${pwa_vlaue} -eq -1 ]; then
@@ -94,7 +94,7 @@ U02(){
     REPORT_LOG "W" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 
-  RUNC grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '
+  RUNC "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     expr $(grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0
     if [ ${pwa_vlaue} -eq -1 ]; then
@@ -106,7 +106,6 @@ U02(){
     REPORT_LOG "W" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
   fi
 }
-
 
 main(){
   U01
