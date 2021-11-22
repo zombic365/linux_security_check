@@ -1,6 +1,6 @@
 #!/bin/bash
-source ./common_script.cfg
-source ./common_color.cfg
+source /root/linux_security_check/check_security/common_script.cfg
+source /root/linux_security_check/check_security/common_color.cfg
 
 if [ -f ./check_report.log ]; then 
   rm -f ./check_report.log
