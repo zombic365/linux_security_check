@@ -1,9 +1,9 @@
 #!/bin/bash
-source /root/linux_security_check/check_security/common_script.cfg
-source /root/linux_security_check/check_security/common_color.cfg
+source /root/linux_security_check/common_script.cfg
+source /root/linux_security_check/common_color.cfg
 
-if [ -f ./check_report.log ]; then 
-  rm -f ./check_report.log
+if [ -f /root/check_report.log ]; then 
+  rm -f /root/check_report.log
 fi
 
 #U-01(상)
