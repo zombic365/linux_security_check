@@ -155,12 +155,80 @@ U05(){
   esac
 }
 
+U06(){
+  check_nouser=$(find / -nouser -print 2>/dev/null)
+  if [ -n ${check_nouse} ]; then
+    REPORT_LOG "N" "06" "find / -nouser -print 2>/dev/null"
+  else
+    REPORT_LOG "Y" "06" "find / -nouser -print 2>/dev/null"
+  fi
+  check_nogroup=$(find / -nogroup -print 2>/dev/null)
+  if [ -n ${check_nogroup} ]; then
+    REPORT_LOG "N" "06" "find / -nogroup -print 2>/dev/null"
+  else
+    REPORT_LOG "Y" "06" "find / -nogroup -print 2>/dev/null"
+  fi
+}
+
+U07(){
+  check_user=$(stat -c '%U' /etc/passwd)
+  check_group=$(stat -c '%G' /etc/passwd)
+  check_permission=$(stat -c '%a' /etc/passwd)
+  if [ ${check_user} == root -a ${check_group} == root -a "${check_permission}" == 644 ]; then
+    REPORT_LOG "N" "07" "stat -c '%U %G %a' /etc/passwd"
+  else
+    REPORT_LOG "Y" "07" "stat -c '%U %G %a' /etc/passwd"
+  fi
+}
+
+U08(){
+  check_user=$(stat -c '%U' /etc/shadow)
+  check_group=$(stat -c '%G' /etc/shadow)
+  check_permission=$(stat -c '%a' /etc/shadow)
+  if [ ${check_user} == root -a ${check_group} == root -a "${check_permission}" == 400 ]; then
+    REPORT_LOG "N" "08" "stat -c '%U %G %a' /etc/shadow"
+  else
+    REPORT_LOG "Y" "08" "stat -c '%U %G %a' /etc/shadow"
+  fi
+}
+
+U09(){
+  check_user=$(stat -c '%U' /etc/hosts)
+  check_group=$(stat -c '%G' /etc/hosts)
+  check_permission=$(stat -c '%a' /etc/hosts)
+  if [ ${check_user} == root -a ${check_group} == root -a "${check_permission}" == 600 ]; then
+    REPORT_LOG "N" "09" "stat -c '%U %G %a' /etc/hosts"
+  else
+    REPORT_LOG "Y" "09" "stat -c '%U %G %a' /etc/hosts"
+  fi
+}
+
+U10(){
+  RUNC "stat -c '%U %G %a' /etc/xinetd.conf"
+  if [ "${res}" == 0 ]; then
+    check_user=$(stat -c '%U' /etc/xinetd.conf)
+    check_group=$(stat -c '%G' /etc/xinetd.conf)
+    check_permission=$(stat -c '%a' /etc/xinetd.conf)
+    if [ ${check_user} == root -a ${check_group} == root -a "${check_permission}" == 600 ]; then
+      REPORT_LOG "N" "10" "stat -c '%U %G %a' /etc/xinetd.conf"
+    else
+      REPORT_LOG "Y" "10" "stat -c '%U %G %a' /etc/xinetd.conf"
+    fi
+  elif [ "${res}" == 1 ]; then
+    REPORT_LOG "W" "10" "stat -c '%U %G %a' /etc/xinetd.conf" "Not found file."
+  fi
+}
 main(){
   U01
   U02
   U03
   U04
   U05
+  U06
+  U07
+  U08
+  U09
+  U10
 }
 
 main $*
