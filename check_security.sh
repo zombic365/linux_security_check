@@ -136,7 +136,7 @@ U05(){
     REPORT_LOG "N" "05" "echo ${PATH} |grep -E '::|\.:|\.\.|\.'"
   fi
 
-  case in ${SHELL}
+  case ${SHELL} in
   "/bin/bash" )
     RUNC "grep -E '::|\.:|\.\.' /etc/profile"
 
