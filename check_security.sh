@@ -19,7 +19,7 @@ U01(){
   if [ "${res}" == 0 ]; then
     REPORT_LOG "N" "01" "grep 'pts' /etc/securetty"
   elif [ "${res}" == 2 ]; then
-    REPORT_LOG "W" "01" "find /etc -type f -name 'securetty'" "Not found file"
+    REPORT_LOG "W" "01" "grep 'pts' /etc/securetty" "Not found file"
   else
     REPORT_LOG "Y" "01" "grep 'pts' /etc/securetty"
   fi
