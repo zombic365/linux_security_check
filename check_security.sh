@@ -152,6 +152,7 @@ U05(){
     else
       REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
     fi
+  esac
 }
 
 main(){
