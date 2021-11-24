@@ -137,22 +137,22 @@ U05(){
   fi
 
   case ${SHELL} in
-  "/bin/bash" )
-    RUNC "grep -E '::|\.:|\.\.' /etc/profile"
+    "/bin/bash" )
+      RUNC "grep -E '::|\.:|\.\.' /etc/profile"
 
-    if [ "${res}" == 1 ]; then
-      REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' /etc/profile"
-    else
-      REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' /etc/profile"
-    fi
+      if [ "${res}" == 1 ]; then
+        REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' /etc/profile"
+      else
+        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' /etc/profile"
+      fi
 
-    RUNC "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
-    if [ "${res}" == 1 ]; then
-      REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
-    else
-      REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
-    fi
-  ;;
+      RUNC "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
+      if [ "${res}" == 1 ]; then
+        REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
+      else
+        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
+      fi
+    ;;
   esac
 }
 
@@ -219,7 +219,49 @@ U10(){
     REPORT_LOG "W" "10" "stat -c '%U %G %a' /etc/xinetd.conf" "Not found file."
   fi
 }
+
+U44(){
+  check_uid=$(awk -F':' '{print $3}' /etc/passwd |grep -c  '^0')
+
+  if [ ${check_uid} -eq 1 ]; then
+    REPORT_LOG "Y" "44" "awk -F':' '{print $3}' /etc/passwd |grep -c  '^0'"
+  else
+    REPORT_LOG "N" "44" "awk -F':' '{print $3}' /etc/passwd |grep -c '^0'" " Result > 1"
+  fi
+}
+
+U45(){  
+  check_permission=$(stat -c '%a' /usr/bin/su)
+  if [ "${check_permission}" == 4750 ]; then
+    REPORT_LOG "Y" "45" "stat -c '%a' /usr/bin/su"
+  else
+    REPORT_LOG "N" "4" "stat -c '%a' /usr/bin/su" "Result != 4750"
+  fi
+
+  check_group=$(stat -c '%G' /usr/bin/su)
+  if [ "${check_group}" == root ]; then
+    REPORT_LOG "N" "45" "stat -c '%G' /usr/bin/su" "Result != wheel"
+  elif [ "${check_group}" == wheel ]; then
+    REPORT_LOG "Y" "45" "stat -c '%G' /usr/bin/su"
+  fi
+
+  check_su_user=$(awk -F':' '/^wheel/ {print $4}' /etc/group |wc -l)
+  if [ "${check_su_user}" -eq 0 ]; then
+    REPORT_LOG "Y" "45" "awk -F':' '/^wheel/ {print $4}' /etc/group |wc -l"
+  else
+    REPORT_LOG "W" "45" "awk -F':' '/^wheel/ {print $4}' /etc/group |wc -l" "Result > 0"
+  fi
+  # grep "pam_rootok.so" /etc/pam.d/su |grep -v "^#" |wc -l
+  # grep "pam_wheel.so" /etc/pam.d/su |grep -v "^#" |wc -
+}
+
 main(){
+  ACCOUNT_MGMT=("U01" "U02" "U03" "U04" "U44" "U45" "U46" "U47" "U48" "U49" "U50" "U51" "U52" "U53")
+
+
+
+  
+  for i in U01
   U01
   U02
   U03
