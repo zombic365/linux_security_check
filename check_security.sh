@@ -235,7 +235,7 @@ U45(){
   if [ "${check_permission}" == 4750 ]; then
     REPORT_LOG "Y" "45" "stat -c '%a' /usr/bin/su"
   else
-    REPORT_LOG "N" "4" "stat -c '%a' /usr/bin/su" "Result != 4750"
+    REPORT_LOG "N" "45" "stat -c '%a' /usr/bin/su" "Result != 4750"
   fi
 
   check_group=$(stat -c '%G' /usr/bin/su)
@@ -253,6 +253,65 @@ U45(){
   fi
   # grep "pam_rootok.so" /etc/pam.d/su |grep -v "^#" |wc -l
   # grep "pam_wheel.so" /etc/pam.d/su |grep -v "^#" |wc -
+  # PAM작업 해야함
+}
+
+U46(){
+  check_pass_min=$(awk '/^PASS_MIN_LEN/ {print $2}' /etc/login.defs)
+  if [ ${check_pass_min} -gt 7 ]; then
+    REPORT_LOG "Y" "46" "awk '/^PASS_MIN_LEN/ {print $2}' /etc/login.defs"
+  else
+    REPORT_LOG "N" "46" "awk '/^PASS_MIN_LEN/ {print $2}' /etc/login.defs" "Result < 7"
+  fi
+}
+
+U47(){
+  check_pass_min=$(awk '/^PASS_MAX_DAYS/ {print $2}' /etc/login.defs)
+  if [ ${check_pass_min} -lt 91 ]; then
+    REPORT_LOG "Y" "47" "awk '/^PASS_MAX_DAYS/ {print $2}' /etc/login.defs"
+  else
+    REPORT_LOG "N" "47" "awk '/^PASS_MAX_DAYS/ {print $2}' /etc/login.defs" "Result < 91"
+  fi
+}
+
+U48(){
+  check_pass_min=$(awk '/^PASS_MIN_DAYS/ {print $2}' /etc/login.defs)
+  if [ ${check_pass_min} -gt 0 ]; then
+    REPORT_LOG "Y" "48" "awk '/^PASS_MIN_DAYS/ {print $2}' /etc/login.defs"
+  else
+    REPORT_LOG "N" "48" "awk '/^PASS_MIN_DAYS/ {print $2}' /etc/login.defs" "Result < 0"
+  fi
+}
+
+U49(){
+  #불필요 계정 확인하는 절차
+  REPORT_LOG "C" "49" "check please file."
+}
+
+U50(){
+  check_group_null=$(awk -F':' '/^root/ {print $4}' /etc/group)
+  if [ "$(awk -F':' '/^root/ {print $4}' /etc/group)" == " " ];
+    REPORT_LOG "Y" "50" "awk -F':' '/^root/ {print $4}' /etc/group"
+  else
+    REPORT_LOG "N" "50" "awk -F':' '/^root/ {print $4}' /etc/group" "root group not null."
+  fi
+}
+
+U51(){
+  REPORT_LOG "C" "51" "check please file."
+}
+
+U52(){
+  check_uid_null=$(awk -F':' '{print $3}' /etc/passwd |uniq -d)
+  if [ -z ${check_uid_null} ]; then
+    REPORT_LOG "Y" "52" "awk -F':' '{print $3}' /etc/passwd |uniq -d"
+  elif [ ! -z ${check_uid_null} ]; then
+    REPORT_LOG "N" "52" "awk -F':' '{print $3}' /etc/passwd |uniq -d" "Overlap uid."
+  fi
+}
+
+U53(){
+  REPORT_LOG "C" "53" "check please file."
 }
 
 main(){
@@ -262,7 +321,6 @@ main(){
   for i in ${ACCOUNT_MGMT[@]}; do
     echo "==================================================================================" >>/root/check_report.log
     ${i}
-    echo "==================================================================================" >>/root/check_report.log
   done
 }
 
