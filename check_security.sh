@@ -290,7 +290,7 @@ U49(){
 
 U50(){
   check_group_null=$(awk -F':' '/^root/ {print $4}' /etc/group)
-  if [ "$(awk -F':' '/^root/ {print $4}' /etc/group)" == " " ];
+  if [ "$(awk -F':' '/^root/ {print $4}' /etc/group)" == " " ]; then
     REPORT_LOG "Y" "50" "awk -F':' '/^root/ {print $4}' /etc/group"
   else
     REPORT_LOG "N" "50" "awk -F':' '/^root/ {print $4}' /etc/group" "root group not null."
