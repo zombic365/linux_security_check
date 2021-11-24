@@ -321,7 +321,7 @@ main(){
     echo "==================================================================================" >>/root/check_report.log
     ${i}
   done
-  echo -e "${Color_Off}Completed${Color_Off}"
+  echo -e "${Color_Off}Completed${Color_Off}" >>/root/check_report.log
 }
 
 main $*
