@@ -316,12 +316,13 @@ U53(){
 
 main(){
   ACCOUNT_MGMT=("U01" "U02" "U03" "U04" "U44" "U45" "U46" "U47" "U48" "U49" "U50" "U51" "U52" "U53")
-
-  for i in ${ACCOUNT_MGMT[@]}; do
+  # FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10" "U11" "U12" "U13" "U14" "U15" "U16" "U17" "U18" "U55" "U56" "U57" "U58")
+  FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10")
+  for i in ${ACCOUNT_MGMT[@]} ${FILE_DIR_MGMT[@]}; do
     echo "==================================================================================" >>/root/check_report.log
     ${i}
   done
-  echo -e "${Color_Off}Completed${Color_Off}" >>/root/check_report.log
+  echo -e "${Color_Off}Completed" >>/root/check_report.log
 }
 
 main $*
