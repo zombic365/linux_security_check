@@ -2,108 +2,123 @@
 source /root/linux_security_check/common_script.cfg
 source /root/linux_security_check/common_color.cfg
 
-if [ -f /root/check_report.log ]; then 
+if [ -f /root/check_report.log ]; then
   rm -f /root/check_report.log
 fi
 
 #U-01(상)
 U01(){
+  REPORT_LOG "M" "Remote access restrictions on root accounts."
   RUNC "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
   if [ "${res}" == 0 ]; then
-    REPORT_LOG "N" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
+    check_cnt=$(grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1)
+    if [ "${check_cnt}" == 0 ]; then
+      REPORT_LOG "N" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1" "[auth required /lib/security/pam_securetty.so] no settings."
+    else
+      REPORT_LOG "Y" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1" 
   else
-    REPORT_LOG "Y" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
+    REPORT_LOG "U" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
   fi
 
   RUNC "grep 'pts' /etc/securetty"
   if [ "${res}" == 0 ]; then
-    REPORT_LOG "N" "01" "grep 'pts' /etc/securetty"
+    check_pts=$(grep 'pts' /etc/securetty)
+    if [ -n ${check_pts} ]; then
+      REPORT_LOG "N" "01" "grep 'pts' /etc/securetty" "pts/0 ~ pts/x setting."
+    else
+      REPORT_LOG "Y" "01" "grep 'pts' /etc/securetty"
+    fi
   elif [ "${res}" == 2 ]; then
-    REPORT_LOG "W" "01" "grep 'pts' /etc/securetty" "Not found file"
+    REPORT_LOG "W" "01" "grep 'pts' /etc/securetty" "Not found [/etc/securetty] file."
   else
-    REPORT_LOG "Y" "01" "grep 'pts' /etc/securetty"
+    REPORT_LOG "U" "01" "grep 'pts' /etc/securetty"
   fi
 
-  RUNC "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
+  #RUNC "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
+  RUNC "awk '/^PermitRootLogin/ {print $2}' /etc/ssh/sshd_config"
   if [ "${res}" == 0 ]; then
-    REPORT_LOG "N" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
+    check_option=$(awk '/^PermitRootLogin/ {print $2}' /etc/ssh/sshd_config)
+    if [ "${check_option}" == yes ]
+      REPORT_LOG "Y" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
+    else
+      REPORT_LOG "N" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config" "Option PermitRootLogin not [yes]."
+    fi
   else
-    REPORT_LOG "Y" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
+    REPORT_LOG "U" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config" "Command failed."
   fi
 }
 
 U02(){
-# RUNC grep -E 'retry|minlen|lcredit|ucredit|dcredit|ocredit' /etc/security/pwquality.conf
-  RUNC "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
-  if [ "${res}" == 0 ]; then
-    pwa_value=`expr $(grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [ ${pwa_value} -eq 3 ]; then
-      REPORT_LOG "Y" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
-    else 
-      REPORT_LOG "N" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
-    fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
-  fi
+  # RUNC "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+  # if [ "${res}" == 0 ]; then
+  #   pwa_value=`expr $(grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
+  #   if [ ${pwa_value} -eq 3 ]; then
+  #     REPORT_LOG "Y" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+  #   else 
+  #     REPORT_LOG "N" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" ""
+  #   fi
+  # elif [ "${res}" == 1 ]; then
+  #   REPORT_LOG "W" "02" "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  # fi
 
   RUNC "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     pwa_value=`expr $(grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [[ "${pwa_value}" -eq "-1" ]]; then
+    if [ ${pwa_value} -ge 8 ]; then
       REPORT_LOG "Y" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[minlen] option ${pwa_value}."
     fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  else
+    REPORT_LOG "U" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     pwa_value=`expr $(grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [[ "${pwa_value}" -eq "-1" ]]; then
+    if [ ${pwa_value} -ge -1 ]; then
       REPORT_LOG "Y" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-    REPORT_LOG "N" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[lcredit] option ${pwa_value}."
   fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  else
+    REPORT_LOG "U" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     pwa_value=`expr $(grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [[ "${pwa_value}" -eq "-1" ]]; then
+    if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[ucredit] option ${pwa_value}."
     fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  else
+    REPORT_LOG "U" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     pwa_value=`expr $(grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [[ "${pwa_value}" -eq "-1" ]]; then
+    if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"  "[dcredit] option ${pwa_value}."
     fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  else
+    REPORT_LOG "U" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   if [ "${res}" == 0 ]; then
     pwa_value=`expr $(grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
-    if [[ "${pwa_value}" -eq "-1" ]]; then
+    if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" 
     else 
-      REPORT_LOG "N" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[ocredit] option ${pwa_value}."
     fi
-  elif [ "${res}" == 1 ]; then
-    REPORT_LOG "W" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "Not found optioon"
+  else
+    REPORT_LOG "U" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 }
 
@@ -277,7 +292,7 @@ U15(){
 U16(){
   RUNC "find /dev -type f -exec ls -l {} \;"
   if [ "${res}" == 0 ]; then
-    check_dev_file=(find /dev -type f -exec ls -l {} \;)
+    check_dev_file=$(find /dev -type f -exec ls -l {} \;)
     if [ "${check_dev_file}" -n ]; then
       REPORT_LOG "Y" "16" "find /dev -type f -exec ls -l {} \;"
     else 
