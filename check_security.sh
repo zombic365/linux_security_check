@@ -16,6 +16,7 @@ U01(){
       REPORT_LOG "N" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1" "[auth required /lib/security/pam_securetty.so] no settings."
     else
       REPORT_LOG "Y" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1" 
+    fi
   else
     REPORT_LOG "U" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
   fi
