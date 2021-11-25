@@ -220,6 +220,92 @@ U10(){
   fi
 }
 
+U11(){
+  RUNC "stat -c '%U %G %a' /etc/rsyslog.conf"
+  if [ "${res}" == 0 ]; then
+    check_user=$(stat -c '%U' /etc/rsyslog.conf)
+    check_permission=$(stat -c '%a' /etc/rsyslog.conf)
+    if [ ${check_user} == root -a "${check_permission}" == 640 ]; then
+      REPORT_LOG "N" "11" "stat -c '%U %a' /etc/rsyslog.conf" "owner root, permission 640"
+    else
+      REPORT_LOG "Y" "11" "stat -c '%U %a' /etc/rsyslog.conf"
+    fi
+  elif [ "${res}" == 1 ]; then
+    REPORT_LOG "W" "11" "stat -c '%U %a' /etc/rsyslog.conf" "Not found file."
+  fi
+}
+
+U12(){
+  RUNC "stat -c '%U %a' /etc/services"
+  if [ "${res}" == 0 ]; then
+    check_user=$(stat -c '%U' /etc/services)
+    check_permission=$(stat -c '%a' /etc/services)
+    if [ ${check_user} == root -a "${check_permission}" == 644 ]; then
+      REPORT_LOG "N" "12" "stat -c '%U %a' /etc/services" "owner root, permission 640" 
+    else
+      REPORT_LOG "Y" "12" "stat -c '%U %a' /etc/services"
+    fi
+  elif [ "${res}" == 1 ]; then
+    REPORT_LOG "W" "12" "stat -c '%U %a' /etc/services" "Not found file."
+  fi
+}
+
+U13(){
+  u13_output_file="u13_check_file.txt"
+  RUNC "find / -user root -type f \( -perm -04000 -o -perm -02000 \) -xdev -exec ls –al {} \; 2>/dev/null >>${u13_output_file}"
+  if [ "${res}" == 0 ]; then
+      REPORT_LOG "C" "13" "find / -user root -type f \( -perm -04000 -o -perm -02000 \) -xdev -exec ls –al {} \; 2>/dev/null >>${u13_output_file}"
+  elif [ "${res}" == 1 ]; then
+      REPORT_LOG "N" "13" "find / -user root -type f \( -perm -04000 -o -perm -02000 \) -xdev -exec ls –al {} \; 2>/dev/null >>${u13_output_file}" "not found file."
+  fi
+}
+
+U14(){
+  ##g확인이 필요
+}
+
+U15(){
+  u15_output_file="u15_check_file.txt"
+  RUNC "find / -type f -perm -2 -exec ls {} \; 2>/dev/null >>${u15_output_file}"
+  if [ "${res}" == 0 ]; then
+      REPORT_LOG "C" "15" "find / -type f -perm -2 -exec ls {} \; 2>/dev/null >>${u15_output_file}"
+  elif [ "${res}" == 1 ]; then
+      REPORT_LOG "N" "15" "find / -type f -perm -2 -exec ls {} \; 2>/dev/null >>${u15_output_file}"
+  fi
+}
+
+U16(){
+  RUNC "find /dev -type f -exec ls -l {} \;"
+  check_dev_file=$(find /dev -type f -exec ls -l {} \;)
+  if [ "${res}" == 0 ]; then
+    if [ "$(find /dev -type f -exec ls -l {} \;)" -n ]; then
+      REPORT_LOG "Y" "16" "find /dev -type f -exec ls -l {} \;"
+  elif [ "${res}" == 1 ]; then
+      REPORT_LOG "N" "16" "find /dev -type f -exec ls -l {} \;" "no output."
+  fi
+}
+
+U17(){
+  u17_dirlist=("/etc/hosts.equiv" "$HOME/.rhosts")
+  for dir_name in ${u16_dirlist[@]}; do
+    if [ ! -f ${dir_name} ]; then
+      REPORT_LOG "W" "17" "${dir_name} not found file."
+    elif [ -f ${dir_name} ]; then
+      check_user=$(stat -c '%U' ${dir_name})
+      check_permission=$(stat -c '%a' ${dir_name})
+      if [ ${check_user} == root -a "${check_permission}" == 600 ]; then
+        REPORT_LOG "Y" "17" "stat -c '%U %a' ${dir_name}" "owner root, permission 640" 
+      else
+        REPORT_LOG "Y" "17" "stat -c '%U %a' ${dir_name}" "owner root, permission 640" 
+      fi
+    fi
+  done
+}
+
+U18(){
+  #추후생성
+}
+
 U44(){
   check_uid=$(awk -F':' '{print $3}' /etc/passwd |grep -c  '^0')
 
@@ -314,10 +400,51 @@ U53(){
   REPORT_LOG "C" "53" "check please file."
 }
 
+U55(){
+  if [ -f /etc/hosts.lpd ]; then
+    RUNC "stat -c '%U %G %a' /etc/hosts.lpd"
+    if [ "${res}" == 0 ]; then
+      check_user=$(stat -c '%U' /etc/hosts.lpd)
+      check_permission=$(stat -c '%a' /etc/hosts.lpd)
+      if [ ${check_user} == root -a "${check_permission}" == 640 ]; then
+        REPORT_LOG "N" "55" "stat -c '%U %a' /etc/hosts.lpd" "owner root, permsission 600"
+      else
+        REPORT_LOG "Y" "55" "stat -c '%U %a' /etc/hosts.lpd"
+      fi
+    elif [ "${res}" == 1 ]; then
+      REPORT_LOG "W" "55" "stat -c '%U %a' /etc/hosts.lpd" "Not found file."
+    fi
+  elif [ ! -f /etc/hosts.lpd ]; then
+    REPORT_LOG "?" "55" "/etc/hosts.lpd not found file" 
+  fi
+}
+U56(){
+  check_umask=$(umask)
+  if [ "${check_umask}" == 0022 ]; then
+    REPORT_LOG "Y" "56" "umask"
+  else
+    REPORT_LOG "N" "56" "umask" "umask not value(0022)"
+  fi
+}
+
+U57(){
+  #추후 생성
+}
+U58(){
+  #추후 생성
+}
+
+
+
+
+
+
+
+
 main(){
   ACCOUNT_MGMT=("U01" "U02" "U03" "U04" "U44" "U45" "U46" "U47" "U48" "U49" "U50" "U51" "U52" "U53")
-  # FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10" "U11" "U12" "U13" "U14" "U15" "U16" "U17" "U18" "U55" "U56" "U57" "U58")
-  FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10")
+  FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10" "U11" "U12" "U13" "U14" "U15" "U16" "U17" "U18" "U55" "U56" "U57" "U58")
+  # FILE_DIR_MGMT=("U05" "U06" "U07" "U08" "U09" "U10")
   for i in ${ACCOUNT_MGMT[@]} ${FILE_DIR_MGMT[@]}; do
     echo "==================================================================================" >>/root/check_report.log
     ${i}
