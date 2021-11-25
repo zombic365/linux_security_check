@@ -276,10 +276,13 @@ U15(){
 
 U16(){
   RUNC "find /dev -type f -exec ls -l {} \;"
-  check_dev_file=`find /dev -type f -exec ls -l {} \;`
   if [ "${res}" == 0 ]; then
-    if [ "$(find /dev -type f -exec ls -l {} \;)" -n ]; then
+    check_dev_file=(find /dev -type f -exec ls -l {} \;)
+    if [ "${check_dev_file}" -n ]; then
       REPORT_LOG "Y" "16" "find /dev -type f -exec ls -l {} \;"
+    else 
+      REPORT_LOG "N" "16" "find /dev -type f -exec ls -l {} \;" "/dev internal file"
+    fi
   elif [ "${res}" == 1 ]; then
       REPORT_LOG "N" "16" "find /dev -type f -exec ls -l {} \;" "no output."
   fi
