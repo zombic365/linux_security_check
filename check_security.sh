@@ -50,6 +50,7 @@ U01(){
 }
 
 U02(){
+  REPORT_LOG "M" "password complexity setting."
   # RUNC "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   # if [ "${res}" == 0 ]; then
   #   pwa_value=`expr $(grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
