@@ -276,7 +276,7 @@ U15(){
 
 U16(){
   RUNC "find /dev -type f -exec ls -l {} \;"
-  check_dev_file=$(find /dev -type f -exec ls -l {} \;)
+  check_dev_file=`find /dev -type f -exec ls -l {} \;`
   if [ "${res}" == 0 ]; then
     if [ "$(find /dev -type f -exec ls -l {} \;)" -n ]; then
       REPORT_LOG "Y" "16" "find /dev -type f -exec ls -l {} \;"
