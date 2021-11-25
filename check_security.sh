@@ -39,7 +39,7 @@ U01(){
   RUNC "awk '/^PermitRootLogin/ {print $2}' /etc/ssh/sshd_config"
   if [ "${res}" == 0 ]; then
     check_option=$(awk '/^PermitRootLogin/ {print $2}' /etc/ssh/sshd_config)
-    if [ "${check_option}" == yes ]
+    if [ "${check_option}" == yes ]; then
       REPORT_LOG "Y" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
     else
       REPORT_LOG "N" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config" "Option PermitRootLogin not [yes]."
