@@ -261,7 +261,7 @@ U13(){
 }
 
 U14(){
-  ##g확인이 필요
+  REPORT_LOG "C" "14" "check please file."
 }
 
 U15(){
@@ -303,7 +303,7 @@ U17(){
 }
 
 U18(){
-  #추후생성
+  REPORT_LOG "C" "18" "check please file."
 }
 
 U44(){
@@ -429,17 +429,12 @@ U56(){
 
 U57(){
   #추후 생성
+  REPORT_LOG "C" "58" "check please file."
 }
 U58(){
   #추후 생성
+  REPORT_LOG "C" "58" "check please file."
 }
-
-
-
-
-
-
-
 
 main(){
   ACCOUNT_MGMT=("U01" "U02" "U03" "U04" "U44" "U45" "U46" "U47" "U48" "U49" "U50" "U51" "U52" "U53")
