@@ -108,7 +108,7 @@ U37(){
 
   if [ ${res} -eq 1 ]; then 
     REPORT_LOG "Y" "U37" "grep -E 'AllowOverrid None' /etc/httpd/conf/httpd.conf"
-  elif [ $[res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     REPORT_LOG "N" "U37" "grep -E 'AllowOverrid None' /etc/httpd/conf/httpd.conf" "[AllowOverride None] option setting."
   fi
 }
@@ -119,7 +119,7 @@ U38(){
 
   if [ ${res} -eq 1 ]; then 
     REPORT_LOG "Y" "U38" "find /etc/httpd/ -type d -name manual"
-  elif [ $[res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     check_dir=$(find /etc/httpd/ -type d -name manual)
     if [ -z  ${check_dir} ]; then
       REPORT_LOG "Y" "U38" "find /etc/httpd/ -type d -name manual"
@@ -135,7 +135,7 @@ U39(){
 
   if [ ${res} -eq 1 ]; then 
     REPORT_LOG "Y" "U39" "grep 'Options Indexes FollowSymLinks' /etc/httpd/conf/httpd.conf"
-  elif [ $[res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
       REPORT_LOG "N" "U39" "grep 'Options Indexes FollowSymLinks' /etc/httpd/conf/httpd.conf" "[Options Indexes FollowSymLinks] option setting"
   fi
 }
