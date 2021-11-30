@@ -9,7 +9,7 @@ fi
 #U-01(상)
 U01(){
   REPORT_LOG "M" "Remote access restrictions on root accounts."
-  RUNC "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
+  RUNC "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
   if [ "${res}" == 0 ]; then
     check_cnt=$(grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1)
     if [ "${check_cnt}" == 0 ]; then
@@ -17,8 +17,6 @@ U01(){
     else
       REPORT_LOG "Y" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1" 
     fi
-  else
-    REPORT_LOG "U" "01" "grep -n '/lib/security/pam_securetty.so' /etc/pam.d/login |cut -d: -f1"
   fi
 
   RUNC "grep 'pts' /etc/securetty"
@@ -31,8 +29,6 @@ U01(){
     fi
   elif [ "${res}" == 2 ]; then
     REPORT_LOG "W" "01" "grep 'pts' /etc/securetty" "Not found [/etc/securetty] file."
-  else
-    REPORT_LOG "U" "01" "grep 'pts' /etc/securetty"
   fi
 
   #RUNC "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config"
@@ -44,13 +40,11 @@ U01(){
     else
       REPORT_LOG "N" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config" "Option PermitRootLogin not [yes]."
     fi
-  else
-    REPORT_LOG "U" "01" "grep -i 'PermitRootLogin yes' /etc/ssh/sshd_config" "Command failed."
   fi
 }
 
 U02(){
-  REPORT_LOG "M" "password complexity setting."
+  REPORT_LOG "M" "Password complexity setting."
   # RUNC "grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   # if [ "${res}" == 0 ]; then
   #   pwa_value=`expr $(grep 'retry' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' ') + 0`
@@ -69,10 +63,8 @@ U02(){
     if [ ${pwa_value} -ge 8 ]; then
       REPORT_LOG "Y" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[minlen] option ${pwa_value}."
+      REPORT_LOG "N" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "minlen = ${pwa_value}."
     fi
-  else
-    REPORT_LOG "U" "02" "grep 'minlen' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
@@ -81,10 +73,8 @@ U02(){
     if [ ${pwa_value} -ge -1 ]; then
       REPORT_LOG "Y" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[lcredit] option ${pwa_value}."
-  fi
-  else
-    REPORT_LOG "U" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
+      REPORT_LOG "N" "02" "grep 'lcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "lcredit = ${pwa_value}."
+    fi
   fi
 
   RUNC "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
@@ -93,10 +83,8 @@ U02(){
     if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[ucredit] option ${pwa_value}."
+      REPORT_LOG "N" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "ucredit = ${pwa_value}."
     fi
-  else
-    REPORT_LOG "U" "02" "grep 'ucredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
@@ -105,10 +93,8 @@ U02(){
     if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
     else 
-      REPORT_LOG "N" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"  "[dcredit] option ${pwa_value}."
+      REPORT_LOG "N" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"  "dcredit = ${pwa_value}."
     fi
-  else
-    REPORT_LOG "U" "02" "grep 'dcredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 
   RUNC "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
@@ -117,19 +103,18 @@ U02(){
     if [ ${pwa_value} -le -1 ]; then
       REPORT_LOG "Y" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" 
     else 
-      REPORT_LOG "N" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "[ocredit] option ${pwa_value}."
+      REPORT_LOG "N" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '" "ocredit = ${pwa_value}."
     fi
-  else
-    REPORT_LOG "U" "02" "grep 'ocredit' /etc/security/pwquality.conf |cut -d= -f2 |tr -d ' '"
   fi
 }
 
 U03(){
-  RUNC "ls -l /lib/security/pam_tally.so"
+  REPORT_LOG "M" "Account lock threshold setting."
+  RUNC "grep '/lib/security/pam_taily.so' /etc/pam.d/system-auth"
   if [ "${res}" == 0 ]; then
-    RUNC "grep 'pam_tally.so' /etc/pam.d/system-auth"
+    check_option=$(grep 'pam_tally.so' /etc/pam.d/system-auth)
     if [ "${res}" == 1 ]; then
-      REPORT_LOG "N" "03" "grep 'pam_tally.so' /etc/pam.d/system-auth"
+      REPORT_LOG "N" "03" "grep 'pam_tally.so' /etc/pam.d/system-auth" "[pam_taily.so] Not settings."
     fi
   elif [ "${res}" == 2 ]; then
     REPORT_LOG "W" "03" "ls -l /lib/security/pam_tally.so" "Not found file"
@@ -137,20 +122,27 @@ U03(){
 }
 
 U04(){
-  if [ -f /etc/passwd -a -f /etc/shadow ]; then
-    REPORT_LOG "Y" "04" "ls -l /etc/passwd && ls -l /etc/shadow"
+  if [ -f /etc/passwd ]; then
+    if [ -f /etc/shadow ]; then
+      REPORT_LOG "Y" "04" "ls -l /etc/passwd && ls -l /etc/shadow"
+    else
+      REPORT_LOG "N" "04" "ls -l /etc/passwd && ls -l /etc/shadow" "[/etc/shadow] file not found."
+    fi
   else
-    REPORT_LOG "N" "04" "ls -l /etc/passwd && ls -l /etc/shadow"
+    if [ -f /etc/shadow ]; then
+      REPORT_LOG "N" "04" "ls -l /etc/passwd && ls -l /etc/shadow" "[/etc/passwd] file not found."
+    else
+      REPORT_LOG "N" "04" "ls -l /etc/passwd && ls -l /etc/shadow" "[/etc/passwd, /etc/shadow] file not found."
+    fi
   fi
 }
 
 U05(){
-  RUNC "echo ${PATH} |grep -E '::|\.:|\.\.|\.'"
-
+  RUNC "echo ${PATH} |grep -E '::|\.:|\.\.|\. ${PATH}' >/dev/null"
   if [ "${res}" == 1 ]; then
     REPORT_LOG "Y" "05" "echo ${PATH} |grep -E '::|\.:|\.\.|\.'"
   else
-    REPORT_LOG "N" "05" "echo ${PATH} |grep -E '::|\.:|\.\.|\.'"
+    REPORT_LOG "N" "05" "echo ${PATH} |grep -E '::|\.:|\.\.|\.'" "[${PATH}] line check."
   fi
 
   case ${SHELL} in
@@ -160,31 +152,41 @@ U05(){
       if [ "${res}" == 1 ]; then
         REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' /etc/profile"
       else
-        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' /etc/profile"
+        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' /etc/profile" "[/etc/profile] file check."
       fi
 
       RUNC "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
       if [ "${res}" == 1 ]; then
         REPORT_LOG "Y" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
       else
-        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile"
+        REPORT_LOG "N" "05" "grep -E '::|\.:|\.\.' $HOME/.bash_profile" "[$HOME/.bash_profile] file check."
       fi
     ;;
   esac
 }
 
 U06(){
-  check_nouser=$(find / -nouser -print 2>/dev/null)
-  if [ -n ${check_nouse} ]; then
-    REPORT_LOG "N" "06" "find / -nouser -print 2>/dev/null"
+  RUNC "find / -nouser -print 2>/dev/null" 
+  if [ "${res}" == 0 ]; then
+    check_nouser=$(find / -nouser -print 2>/dev/null)
+    if [ -n ${check_nouse} ]; then
+      REPORT_LOG "N" "06" "find / -nouser -print 2>/dev/null" "Check file list : ${check_nouser}"
+    else
+      REPORT_LOG "Y" "06" "find / -nouser -print 2>/dev/null"
+    fi
+    
+    RUNC "find / -nogroup -print 2>/dev/null"
+    if [ "${res}" == 0 ]; then
+      check_nogroup=$(find / -nogroup -print 2>/dev/null)
+      if [ -n ${check_nogroup} ]; then
+        REPORT_LOG "N" "06" "find / -nogroup -print 2>/dev/null" "Check file list : ${check_nogroup}"
+      else
+        REPORT_LOG "Y" "06" "find / -nogroup -print 2>/dev/null"
+      fi
+    else
+      REPORT_LOG "U" "06" "find / -nogroup -print 2>/dev/null"
   else
-    REPORT_LOG "Y" "06" "find / -nouser -print 2>/dev/null"
-  fi
-  check_nogroup=$(find / -nogroup -print 2>/dev/null)
-  if [ -n ${check_nogroup} ]; then
-    REPORT_LOG "N" "06" "find / -nogroup -print 2>/dev/null"
-  else
-    REPORT_LOG "Y" "06" "find / -nogroup -print 2>/dev/null"
+    REPORT_LOG "U" "06" "find / -nouser -print 2>/dev/null"
   fi
 }
 
