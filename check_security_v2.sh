@@ -23,7 +23,7 @@ U31(){
   RUNC "${CMD}"
   if [ ${res} -eq 1 ]; then
     REPORT_LOG "C"  "${FUNCNAME}" "SMTP not installed."
-  if [ ${res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     echo "ok"
   fi
 }
@@ -34,7 +34,7 @@ U32(){
   RUNC "${CMD}"
   if [ ${res} -eq 1 ]; then
     REPORT_LOG "C" "${FUNCNAME}" "SMTP not installed."
-  if [ ${res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     echo "ok"
   fi
 }
@@ -45,7 +45,7 @@ U33(){
   RUNC "${CMD}"
   if [ ${res} -eq 1 ]; then
     REPORT_LOG "C" "${FUNCNAME}" "SMTP not installed."
-  if [ ${res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     echo "ok"
   fi
 }
@@ -56,7 +56,7 @@ U34(){
   RUNC "${CMD}"
   if [ ${res} -eq 1 ]; then
     REPORT_LOG "C" "${FUNCNAME}" "SMTP not installed."
-  if [ ${res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     echo "ok"
   fi
 }
