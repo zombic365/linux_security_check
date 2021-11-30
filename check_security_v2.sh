@@ -1,12 +1,10 @@
 #!/bin/bash
-
 source /root/linux_security_check/common_script.cfg
 source /root/linux_security_check/common_color.cfg
 
 if [ -f /root/check_report.log ]; then
   rm -f /root/check_report.log
 fi
-
 
 U30(){
   REPORT_LOG "M" "U30" "Sendmail version check."
