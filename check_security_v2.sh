@@ -149,7 +149,6 @@ main(){
   for i in ${SERVICE_MGMT[@]}; do
     echo "==================================================================================" >>/root/check_report.log
     ${i}
-    REPORT_LOG "M" "test"
   done
   echo -e "${Color_Off}Completed" >>/root/check_report.log
 }
