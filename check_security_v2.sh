@@ -82,7 +82,7 @@ U36(){
   if [ ${res} -eq 0 ]; then
     service_name=$(ps -ef |grep apache |grep -v 'auto' |awk '{print $1}' |uniq)
     service_login=$(grep apache /etc/passwd |awk -F':' '{print $7}')
-    if [ $[service_name} != "root" -a ${service_login} == "/sbin/nologin" ]; then
+    if [ ${service_name} != "root" -a ${service_login} == "/sbin/nologin" ]; then
       RUNC "grep -E 'User ${service_name}' /etc/httpd/conf/httpd.conf"
       if [ ${res} -eq 0 ]; then
         RUNC "grep -E 'Group ${service_name}' /etc/httpd/conf/httpd.conf"
