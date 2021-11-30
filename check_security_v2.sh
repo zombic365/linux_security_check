@@ -12,7 +12,7 @@ U30(){
   RUNC "${CMD}"
   if [ ${res} -eq 1 ]; then
     REPORT_LOG "C" "${FUNCNAME}" "SMTP not installed."
-  if [ ${res} -eq 0 ]; then
+  elif [ ${res} -eq 0 ]; then
     echo "ok"
   fi
 }
