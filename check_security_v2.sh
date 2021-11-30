@@ -22,10 +22,10 @@ U30(){
 U31(){
   REPORT_LOG "M" "U31" "Restrictions on spam mail relay."
   check_status=$1
-  if [ ${check_status} == "1" ]; then
+  if [ "${check_status}" == 1 ]; then
     REPORT_LOG "W" "SMTP not installed."
     U32 "1"
-  elif [ ${check_status} == "0" ]; then
+  elif [ "${check_status}" == 0 ]; then
     echo "ok"
     U32 "0"
   fi
@@ -34,9 +34,9 @@ U31(){
 U32(){
   REPORT_LOG "M" "U32" "Prevention of Sendmail execution by general users."
   check_status=$1
-  if [ ${check_status} == "1" ]; then
+  if [ "${check_status}" == 1 ]; then
     REPORT_LOG "W" "SMTP not installed."
-  elif [ ${check_status} == "0" ]; then
+  elif [ "${check_status}" == 0 ]; then
     echo "ok"
  fi
 }
@@ -45,10 +45,10 @@ U33(){
   REPORT_LOG "M" "U33" "DNS security version patch."
   RUNC "U32" "which named"
 
-  if [ ${check_status} == "1" ]; then
+  if [ "${check_status}" == 1]; then
     REPORT_LOG "W" "BIND not installed."
     U34 "1"
-  elif [ ${check_status} == "0" ]; then
+  elif [ "${check_status}" == 0]; then
     echo "ok"
     U34 "0"
   fi
@@ -57,9 +57,9 @@ U33(){
 U34(){
   REPORT_LOG "M" "U34" "DNS zone transfer settings."
   check_status=$1
-  if [ ${check_status} == "1" ]; then
+  if [ "${check_status}" == 1]; then
     REPORT_LOG "W" "BIND not installed."
-  elif [ ${check_status} == "0" ]; then
+  elif [ "${check_status}" == 0]; then
     echo "ok"
   fi
 }
@@ -82,7 +82,7 @@ U36(){
   if [ ${res} -eq 0 ]; then
     service_name=$(ps -ef |grep apache |grep -v 'auto' |awk '{print $1}' |uniq)
     service_login=$(grep apache /etc/passwd |awk -F':' '{print $7}')
-    if [ ${service_name} != "root" -a ${service_login} == "/sbin/nologin" ]; then
+    if [ "${service_name}" != root -a "${service_login}" == /sbin/nologin ]; then
       RUNC "grep -E 'User ${service_name}' /etc/httpd/conf/httpd.conf"
       if [ ${res} -eq 0 ]; then
         RUNC "grep -E 'Group ${service_name}' /etc/httpd/conf/httpd.conf"
